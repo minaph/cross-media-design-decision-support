@@ -22,12 +22,18 @@ export requirements, and printer or venue constraints.
 For HTML/CSS print artifacts:
 
 - keep semantic HTML as the editable source;
-- define physical dimensions with `@page` and separate screen and print rules;
+- define the intended physical page size and page count with `@page` and
+  separate screen and print rules;
 - use Grid or Flexbox inside the page;
-- prefer vector diagrams when practical;
+- record required image resolution and prefer vector diagrams when practical;
 - export a PDF for delivery;
-- inspect the rendered PDF and, when possible, critical text, QR codes, and
-  raster assets at physical size.
+- inspect every final PDF page for missing material, clipping, overflow, and
+  critical text, QR codes, and raster assets at physical size.
+
+DOM containment is not proof of page containment. For example, a print DOM with
+`min-height` can grow beyond the intended physical page while its children still
+appear contained in the DOM; only the paginated PDF reveals whether content was
+continued, clipped, or omitted.
 
 `print-color-adjust: exact` does not guarantee printer output. Printer and venue
 requirements govern when they are more specific.
