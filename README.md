@@ -2,6 +2,8 @@
 
 A portable Agent Skill for structuring ambiguous design requests, routing them to medium-appropriate guidance, and validating the rendered result.
 
+The skill owns design decisions and acceptance criteria. It hands production to available medium-specific skills or tools when requested; it does not bundle a rendering or video-editing toolchain. Planning-only work ends with the requested design brief.
+
 This repository turns a comparative review of design systems, design resources, and agent design skills into an operational skill. The central idea is not to copy a particular vendor aesthetic. Instead, the skill separates three responsibilities:
 
 1. **General design judgment** — clarify audience, purpose, context, information hierarchy, readability, accessibility, and the role of strong visual distinctions.
@@ -30,7 +32,7 @@ cross-media-design-decision-support/
 └── DESIGN.md   # Design rationale, A/B/C architecture, resource registry and maintenance decisions
 ```
 
-For public redistribution, add a `LICENSE` file and mirror its identifier in the optional `license` field of `SKILL.md`.
+No license has been selected yet. MIT is under consideration; a `LICENSE` file and matching optional `license` field in `SKILL.md` will be added when adopted.
 
 The larger `principles/`, `media/`, `tokens/`, `assets/`, `templates/`, `references/`, and `validation/` tree described in the research report is **not the required repository structure of this skill**. It is a downstream packaging template the skill may recommend when organizing a reusable design system or cross-media design package.
 

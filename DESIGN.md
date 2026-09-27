@@ -2,6 +2,10 @@
 
 This document records the design rationale behind `cross-media-design-decision-support`. It is intentionally separate from `SKILL.md`: the skill file contains runtime instructions, while this file preserves the research-derived architecture, resource registry, maintenance policy, and boundaries that explain those instructions.
 
+The source is the user-supplied ChatGPT Deep Research report titled "媒体横断・ウェブ親和型デザイン資源の比較研究と、学会ポスター制作を含むエージェントスキル設計", dated 2026-09-27. Its JSON export is retained locally at `tmp/report.json` and is not distributed. The export includes conversation metadata and session-local citation identifiers; its claims are research inputs, not independently reverified facts. The registry below provides public source routes, but is not a complete claim-to-source audit of that report.
+
+The report's motion coverage concerns time-based communication, audio/subtitles, timeline checks, and cross-media brand operations. The skill adopts that limited scope; it does not infer a general video-production method or add encoding requirements from the report.
+
 ## 1. Clarifying the two directory trees in the research report
 
 The research report contains two closely related directory trees:

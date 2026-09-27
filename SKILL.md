@@ -14,6 +14,8 @@ description: >
 
 Turn design requests into explicit, medium-appropriate decisions before styling.
 
+Own design judgment and handoff: clarify the communication job, select relevant resources, and specify acceptance checks. Use an available medium-specific skill or tool for production when the user requests it; do not assume a named skill is installed. If no suitable capability is available, deliver the design brief and identify the implementation or verification still needed. A planning-only request ends with the requested decisions and validation plan.
+
 Do not choose a vendor design system as an aesthetic shortcut. First identify the communication job and the type of medium, then use the authority or asset library that actually governs that problem.
 
 For detailed rationale, resource provenance, and the maintained resource registry, read [DESIGN.md](DESIGN.md) when relevant.
@@ -82,6 +84,8 @@ Across derivative media, preserve semantic roles and hierarchy where possible, w
 
 Use the following design classes before routing to resources.
 
+Classes can overlap: a slide has both a finite canvas and a sequence, while a product UI may require both responsive layout and interaction checks. Combine the relevant constraints rather than forcing a single category.
+
 ### Continuous or variable media
 
 Examples: responsive web documents and many browser-based artifacts.
@@ -123,6 +127,12 @@ Examples: presentation slides.
 Rebuild information density and sequence for spoken presentation. Reuse tokens, figures, visual motifs, and terminology where useful, but do not shrink a poster or webpage into a slide deck.
 
 Validate both file structure and rendered slides.
+
+### Motion and video
+
+Treat video as time-based communication with visual sequence, audio, and subtitles. Establish how the central message unfolds over time and how audio and subtitles support it. Hand these decisions to an available video-production capability; this skill does not prescribe an editing stack or encoding settings.
+
+For branded video, consult the cross-media identity resources in [DESIGN.md](DESIGN.md) when the brand context fits. Those resources guide identity use, not general video production. Include subtitle and timeline checks in the handoff and assess the rendered sequence when playback is available.
 
 ### Short-contact marketing or social media
 
@@ -201,6 +211,8 @@ Browse or research further when:
 
 ## 7. Validate the artifact, not only the source
 
+Use these checks as acceptance criteria for the production handoff. For an existing or newly produced artifact, report which checks were actually performed and what evidence supports them. If rendering, playback, or physical inspection is unavailable, identify the unverified checks and their limits; do not claim they passed. For planning-only work, provide the relevant checks without implying an artifact was inspected.
+
 ### Universal
 
 Check:
@@ -246,6 +258,10 @@ Check:
 - structural validation where supported;
 - rendered slides visually inspected.
 
+### Motion and video
+
+Check the rendered timeline, the timing and readability of subtitles, and the relationship between the visual sequence and audio. Apply any relevant brand-resource conditions. Distinguish playback checks from a review of the storyboard alone.
+
 ## 8. Self-critique
 
 Perform one deliberate second pass.
@@ -273,7 +289,7 @@ For substantial design planning, provide:
 5. medium-specific decisions;
 6. named official resources and why they apply;
 7. applicability limits;
-8. implementation plan;
+8. production handoff, when implementation is requested, including required capabilities, source material, and delivery constraints;
 9. validation plan;
 10. remaining uncertainty or external constraints.
 
