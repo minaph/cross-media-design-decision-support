@@ -1,318 +1,88 @@
 # Design Notes
 
-This document records the design rationale behind `cross-media-design-decision-support`. It is intentionally separate from `SKILL.md`: the skill file contains runtime instructions, while this file preserves the research-derived architecture, resource registry, maintenance policy, and boundaries that explain those instructions.
+この文書は `cross-media-design-decision-support` の設計判断・根拠・適用範囲を記録する。実行時の入口は `SKILL.md`、選択して読む手順は `references/`、人間向けの導入は `README.md` に置く。
 
-The source is the user-supplied ChatGPT Deep Research report titled "媒体横断・ウェブ親和型デザイン資源の比較研究と、学会ポスター制作を含むエージェントスキル設計", dated 2026-09-27. Its JSON export is retained locally at `tmp/report.json` and is not distributed. The export includes conversation metadata and session-local citation identifiers; its claims are research inputs, not independently reverified facts. The registry below provides public source routes, but is not a complete claim-to-source audit of that report.
+## 1. 資料と判断の位置づけ
 
-The report's motion coverage concerns time-based communication, audio/subtitles, timeline checks, and cross-media brand operations. The skill adopts that limited scope; it does not infer a general video-production method or add encoding requirements from the report.
+初版の資料は2026-09-27付のユーザー提供調査「媒体横断・ウェブ親和型デザイン資源の比較研究と、学会ポスター制作を含むエージェントスキル設計」である。元JSONはローカルの `tmp/report.json` にあり、会話メタデータを含むため配布しない。調査内の引用記号や比較結果は、独立検証済みの研究結果として扱わない。
 
-## 1. Clarifying the two directory trees in the research report
+2026-09-28の改訂では、ユーザー提供の `ai-design-anti-pattern.md`、質的心理学会向けポスターの実成果物・ユーザー評価・Git履歴、`~/.codex` に保存された関連対話の転記断片を追加の資料とした。履歴の範囲と判断の経過は [recap](docs/poster-design-recap.md) に記す。
 
-The research report contains two closely related directory trees:
+生ログと元レポート全文は配布せず、継続利用に必要な判断手順・反例・参照方法を整理する。元レポートの統計値、検出率、信頼度、カード比率を検証済みの閾値として導入しない。一つの制作事例で得た評価は、他媒体への一般的効果を実証しない。
 
-```text
-design-package/
-├── SKILL.md
-├── principles/
-├── media/
-├── tokens/
-├── assets/
-├── templates/
-├── references/
-└── validation/
-```
+## 2. 維持する基礎構造: A / B / C
 
-and, later inside the proposed skill instructions:
+- **A: 共通の判断** — 読者、場面、伝達の目的、中心メッセージ、情報階層、可読性、アクセシビリティ、強調の役割を定める。特定ベンダーの見た目に従属させない。
+- **B: 媒体への具体化** — 連続・可変の文書、有限の物理面、順次提示、インタラクション、短時間接触、時間を伴う表現を組み合わせる。同じ読む順序でも、視線・提示順・時間軸・操作順で検証が異なる。
+- **C: 資源への案内** — 既知の公式資源を問題に応じて選び、必要時に調査を広げる。CSS仕様、Webアクセシビリティ、公共サービス、学会ポスター、ブランド利用条件はそれぞれ管轄が異なる。
 
-```text
-package/
-├── SKILL.md
-├── principles/
-├── media/
-├── tokens/
-├── assets/
-├── templates/
-├── references/
-└── validation/
-```
+運用上の一覧は [references/resource-registry.md](references/resource-registry.md) に移す。W3C、WCAG、DADS、GOV.UK、USWDS、Material、Carbon、Fluent、Primer、ポスター指針、ブランド資源の使い分けを保持する。URL・版・ライセンス・使用条件が成果物に影響する場合は、その時点の公式情報を確認する。
 
-They describe the same conceptual pattern at two different levels of the report.
+## 3. 今回の作業で露呈した不足
 
-- The first is introduced as a **template for organizing a reusable design system or design package** that the skill may help a user create.
-- The second embeds that recommendation into the proposed skill itself as an instruction for future package-generation tasks.
+既存スキルにも構造を先に定めること、実成果物を検証すること、自己点検はあった。しかし、技術的に一頁へ収まり引用が正確でも、要約箱の反復が主例を弱める場合があった。箱の削除や色替えだけで終わらず、何から読み、何と比較し、どの根拠を追うかまで点検する必要がある。
 
-They are therefore **not the required repository tree of this Agent Skill**.
+また、整理・削減によって生じた余白は、理論や手続きの説明不足を補う機会にもなる。余白を減らすこと自体を目的とせず、読者の未解決の疑問に沿って内容を選ぶ。レビューで不具合が見つからないことと、内容をさらに育てられることは両立する。合否確認に加え、形成的な候補比較を独立して呼び出せるようにする。
 
-The current skill can remain much smaller because it does not bundle fonts, icons, templates, scripts, or design-token files. It primarily bundles procedural knowledge and a curated routing registry.
+## 4. 組み込み案の比較
 
-## 2. Core architecture: A / B / C
+| 案 | 利点 | 負担・失敗しやすい点 | 判断 |
+| --- | --- | --- | --- |
+| A. アンチパターン全文をSKILL.mdへ追加 | 起動時に全項目が見える | Web固有の検出規則が毎回読み込まれ、形成と検査が混ざる。未検証の閾値が規範化しやすい | 採用しない |
+| B. 元資料を分離しリンクだけ追加 | 変更量が少なく、原資料を保てる | 読む契機、他媒体への移し方、反例の扱いが未定義 | 出典保全には有効だが実行手順として不足 |
+| C. 形成・レビュー等をreferenceへ分け、SKILLを共通入口に整理 | 必要な手順を選べる。共通原則と媒体別検査を分離し、往復を明示できる | 重複・参照切れ・規則の食い違いを点検する必要がある | 採用 |
+| D. 形成用とレビュー用を別Skillへ分割 | 独立して起動・保守できる | 目的・根拠保全・媒体分類の複製と引き継ぎ負担が増える | 現段階では保留。独立した保守責任が生じたら再検討 |
 
-The research converged on three layers.
+ユーザーの「形成的な支援とレビュー支援が分離されているほうがやりやすい」という意向をCで具体化する。形成は内容や構成の候補を比較し、レビューは指定された候補版を点検する。同じアンチパターンでも、前者は問いと選択肢、後者は観察・影響・修正案・再確認として出力する。
 
-### A. General judgment
+## 5. ファイルの責任
 
-This is not a separate module; it is the stance applied throughout the workflow.
+| ファイル | 責任・読む契機 |
+| --- | --- |
+| `SKILL.md` | 起動条件、共通制約、モード選択、referenceへの経路、出力契約 |
+| `references/formative-design.md` | 内容選択、情報階層、代替構成、余白と情報密度、制作への引き継ぎ |
+| `references/artifact-review.md` | 観察、適用範囲、所見の確度・影響、再検証、終了判断 |
+| `references/anti-patterns.md` | 共通する失敗機序、具体例、正当な使用例、媒体別検査との対応 |
+| `references/media-routing.md` | 物理面・可変面・提示順・操作・時間軸ごとの制作と検証 |
+| `references/resource-registry.md` | 既知の公式資源と使用範囲、現行情報を調べる入口 |
+| `DESIGN.md` | 構成案の比較、採否、由来、保守方針 |
+| `docs/poster-design-recap.md` | 経過、差し戻し、成果物・履歴の根拠、学んだこと |
+| `docs/validation.md` | 構造点検、シナリオ検討、レビュー結果、未検証範囲 |
 
-The agent should clarify:
+初版資料の `design-package/` と `package/` の大きなディレクトリ構成は、下流のデザインパッケージの提案だった。スキル自身に `assets/`、`tokens/`、`templates/`、`scripts/` 等をすべて設ける要件ではない。今回は独立して読み込む手順が生まれたため `references/` を追加する。
 
-- audience;
-- task or communication job;
-- context of use;
-- central message;
-- information hierarchy;
-- readability;
-- accessibility;
-- visual emphasis;
-- validation needs.
+## 6. 他媒体へ移す方法
 
-The purpose is to prevent local styling conventions from substituting for communication logic.
+症状の見た目をそのまま移さず、読者や利用者が何を失うかを先に記述する。
 
-### B. Medium routing
+| 元資料の着眼点 | 共通する問題 | 媒体ごとの具体化と限界 |
+| --- | --- | --- |
+| AP-01 カード化過多 | 反復形式が関係の違いを隠す | ポスターの箱、スライドの定型パネル、動画の反復テロップ。独立商品の比較などは反復を保持する |
+| AP-02・05 強調競合・階層 | 最初に何を見る／するかが不明 | UIの主操作、ポスターの主例、スライドの論点。CTA個数やDOM規則を印刷へ移さない |
+| AP-03・04 汎用テンプレート | 目的を既成形式へ合わせる | 架空KPI、研究発表の営業的ヒーロー、不要な定型図。目的に合う定型は正当な選択肢 |
+| AP-06 抽象コピー | 対象・判断・結果の具体性が不足 | 見出し、図表説明、ナレーション。学術的な留保や技術用語を断定・平易化のために消さない |
+| AP-07 根拠不明のデータ | 視覚的な説得力が根拠を上回る | 図表、集計、実績。実測・引用・計算・例示・解釈を区別し、分母と単位を確認する |
+| AP-08〜14 操作・意味・可読性 | 情報に到達・操作できない | DOM、フォーカス、フォームはWebの検査。紙は文字サイズ・距離・印刷、動画は字幕・時間・音声を扱う |
+| AP-15・16 一貫性・動き | 意味の対応や注意配分が不安定 | 色とラベル、凡例、遷移、字幕。状態や動きがなければ該当なしとする |
 
-The same concept of “readability” has different implementation consequences in different media.
+カード数、色、角丸、単語、余白率は単独の不良判定にしない。元資料の数値ヒューリスティックは媒体固有の規範や実測と切り分ける。該当しない項目までチェックリストで埋めない。
 
-The skill therefore distinguishes, before implementation:
+## 7. 形成とレビューの接続
 
-- continuous or variable media;
-- finite fixed canvases;
-- sequential media;
-- interactive media;
-- short-contact marketing/social media.
+形成では、追加候補の役割・根拠・説明コストを比較する。空き面積があるときも「追加」「既存説明の改善」「図表化」「余白の維持」を候補に含める。資料にない統計や、主題を広げるだけの理論は採用しない。根拠を持つ内容を選び、その後に文字サイズと全体配分を調整する。
 
-This routing determines which technical or domain authority should be consulted.
+レビューでは、前後の読み順と情報の役割を比較する。実装の成立、資料の正確さ、伝達の有効性を別々に確認し、どの観点まで根拠があるか報告する。構造・内容選択の問題が出たら形成へ戻す。修正後は影響のあった媒体を再出力し、対象版・指摘・採否・修正・再確認・外部条件を記録する。
 
-### C. Resource routing
+監督型ワークフローは今回の運用例としてrecapに残す。スキル一般の要件として特定モデル、サブエージェント、Git運用、push権限を要求しない。利用環境とユーザーの許可に従う。
 
-The skill should maintain known first-choice resources rather than repeat an unrestricted search for every task.
+## 8. 既存の媒体方針を保つ
 
-The agent should search beyond the registry when a known resource does not fit or when current facts such as version, URL, license, or usage terms need confirmation.
+HTML/CSSポスターは意味構造を持つHTMLを編集元、物理単位と印刷CSSを有限面の制約、PDFを派生成果物とする。PDFを目視し、会場・印刷所の仕様を優先する。画面版は読み順と密度を適応させる。一頁に収まることは、内容の十分さや実寸可読性を保証しない。
 
-## 3. Why the skill does not copy one design system
+スライドは発話と提示順、動画は時間・音声・字幕の関係を扱う。初版調査の動画資料は主にブランド横断運用を対象とし、一般的な映像制作手順やエンコード仕様の根拠にはしない。制作は利用可能な媒体別能力へ引き継ぎ、計画のみの依頼では制作・検査済みと主張しない。
 
-The compared systems are authoritative in different scopes.
+## 9. 保守と検証
 
-Examples:
+安定した原則は、目的からの構成、情報の優先順位、根拠の保全、媒体による具体化、実成果物の検証である。変わりうる情報はURL、版、ライセンス、ブランド条件、対応形式である。後者の更新のために前者を毎回書き換えない。
 
-- W3C specifications govern CSS behavior.
-- WCAG governs web accessibility criteria.
-- GOV.UK, USWDS, and DADS are especially strong for evidence-driven service design, structure, accessibility, and implementation examples.
-- Material, Carbon, Fluent, and Primer are strong component/token ecosystems for product UI.
-- Apple and public-sector brand kits are useful examples of cross-media asset governance, but their proprietary visual assets are not generic building blocks.
-- Academic-poster guidance addresses communication goals rather than CSS implementation.
-
-The design rule is therefore:
-
-> identify the problem type first, then consult the authority that owns that problem.
-
-## 4. Resource registry
-
-This registry records first routes, not universal winners. Re-check current URLs, versions, licenses, and usage conditions when they materially affect a deliverable.
-
-### General web and public-service structure
-
-**DADS — Digital Agency Design System**  
-https://design.digital.go.jp/dads/
-
-Use for Japanese-language web/service-design guidance, accessibility, Figma, code, tokens, documentation, and related assets.
-
-**GOV.UK Design System**  
-https://design-system.service.gov.uk/
-
-Use for evidence-driven public-service content, layout, accessibility, and implementation examples.
-
-**U.S. Web Design System (USWDS)**  
-https://designsystem.digital.gov/
-
-Use for public-service web patterns, tokens, code, and design kits.
-
-### Product UI and tokens
-
-**Material 3**  
-https://m3.material.io/
-
-Use for broad application UI, component, token, and interaction guidance.
-
-**IBM Carbon**  
-https://carbondesignsystem.com/
-
-Use for enterprise and data-rich product interfaces.
-
-**Microsoft Fluent 2**  
-https://fluent2.microsoft.design/
-
-Use for Microsoft-oriented and cross-platform product UI.
-
-**GitHub Primer**  
-https://primer.style/
-
-Use for developer-oriented product UI, primitives, accessibility, and Octicons integration.
-
-### General-purpose icons
-
-**Material Symbols**  
-https://developers.google.com/fonts/docs/material_symbols
-
-Broad semantic icon vocabulary; commonly available as SVG/PNG and font forms. Confirm current license and distribution terms at use time.
-
-**Fluent System Icons**  
-https://github.com/microsoft/fluentui-system-icons
-
-Large coherent interface icon family with SVG and platform packages. Confirm current repository license at use time.
-
-**Primer Octicons**  
-https://primer.style/octicons/
-
-SVG-first icon set particularly suitable for developer and tooling concepts. Confirm current license at use time.
-
-### Japanese explanatory illustrations
-
-**Digital Agency illustrations and icons**  
-https://www.digital.go.jp/policies/servicedesign/designsystem/Illustration_Icons
-
-Use when the visual language and usage conditions fit Japanese administrative or explanatory communication. Check current print/color notes and terms before reuse.
-
-### Print and HTML-to-print
-
-**W3C CSS Paged Media**  
-https://www.w3.org/TR/css-page-3/
-
-Use for page dimensions, orientation, and paged-media behavior in CSS.
-
-**W3C CSS Color Adjustment**  
-https://www.w3.org/TR/css-color-adjust-1/
-
-Use for the semantics and limits of print color adjustment.
-
-### Accessibility
-
-**WCAG 2.2**  
-https://www.w3.org/TR/WCAG22/
-
-Use as the web-accessibility baseline where applicable.
-
-### Academic posters
-
-**PLOS — Ten Simple Rules for a Good Poster Presentation**  
-https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.0030102
-
-Use for poster communication goals, rapid recognition, title/claim framing, and content prioritization. Do not use it as a CSS or print-production specification.
-
-### Cross-media identity and brand operations
-
-**Apple App Store Marketing Resources**  
-https://developer.apple.com/app-store/marketing/guidelines/
-
-Use as a reference for coordinating digital and print asset rules. Proprietary brand assets remain governed by Apple’s current terms.
-
-**Digital Agency logotype kit**  
-https://www.digital.go.jp/applications/logotype
-
-Use as an example of parallel screen/print sizing and asset variants. Follow current usage conditions for the actual marks.
-
-**Digital Marketplace Visual Identity**  
-https://www.digital.go.jp/policies/dmp
-
-Use as an example of cross-media visual-identity governance.
-
-## 5. Academic-poster implementation decision
-
-For an academic poster built with HTML/CSS, the research supports the following separation of responsibilities:
-
-- semantic HTML is the editable source of truth;
-- CSS tokens carry reusable visual roles;
-- physical page dimensions are explicit;
-- screen CSS provides preview behavior;
-- print CSS provides finite-canvas behavior;
-- PDF is a derived delivery/print artifact;
-- final validation targets the rendered PDF and, where possible, physical-size checks.
-
-This structure permits the same content, figures, and tokens to be adapted to web pages, slides, and social assets without pretending those media share the same layout.
-
-## 6. Why `README.md`, `SKILL.md`, and `DESIGN.md`
-
-### `README.md`
-
-Audience: humans evaluating or installing the repository.
-
-Keep:
-
-- project purpose;
-- research summary;
-- scope and non-goals;
-- repository structure;
-- installation/use overview;
-- maintenance date;
-- license notice.
-
-Do not place detailed runtime procedures here.
-
-### `SKILL.md`
-
-Audience: compatible agents after skill activation.
-
-Keep:
-
-- frontmatter and trigger description;
-- operational workflow;
-- medium classification;
-- routing protocol;
-- validation rules;
-- output contract;
-- direct references to `DESIGN.md` when detailed registry or rationale is needed.
-
-Keep it concise because agents load the full file after activation.
-
-### `DESIGN.md`
-
-Audience: maintainers and agents that need detailed routing context.
-
-Keep:
-
-- architecture rationale;
-- the A/B/C distinction;
-- explanation of the report’s package trees;
-- detailed resource registry;
-- provenance and maintenance policy;
-- design tradeoffs;
-- boundaries and rejected interpretations.
-
-This file may later be split into `references/` if it grows substantially or different parts need independent loading.
-
-## 7. When to expand the repository
-
-Do not create directories merely because the research report showed them.
-
-Expand only when the repository actually contains the corresponding responsibility:
-
-- `references/` when detailed runtime references become large or independently loadable;
-- `assets/` when templates, images, lookup data, or bundled examples are added;
-- `scripts/` when executable validation or conversion logic is added;
-- `templates/` when the skill begins shipping concrete starter artifacts;
-- `validation/` when checklists become large enough to deserve independent maintenance.
-
-If a resource is only an external URL in the registry, it does not require a local `assets/` directory.
-
-## 8. Maintenance policy
-
-The research snapshot is dated **2026-09-27**.
-
-Stable claims should be separated from time-sensitive claims.
-
-Relatively stable:
-
-- purpose-before-style workflow;
-- medium classification;
-- separation of authority by problem type;
-- rendered-artifact validation;
-- distinction between guides and reusable assets.
-
-Time-sensitive:
-
-- URLs;
-- versions;
-- file formats;
-- license terms;
-- proprietary-brand usage rules;
-- exact contents of design kits.
-
-When maintaining the skill, update time-sensitive facts without rewriting the stable architecture unless new evidence changes the routing model itself.
+変更時はreferenceのリンク、責任の重複、形成とレビューの出力差、他媒体への誤適用、正当なカード等の誤検出、研究上の留保の保持を確認する。今回の検証範囲と独立レビューは [docs/validation.md](docs/validation.md) に記録する。
