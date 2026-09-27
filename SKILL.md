@@ -25,8 +25,9 @@ useful progress.
 - **Both:** form a design direction, produce or hand off the artifact, then
   review the specified version. Keep the formation and review findings distinct.
 
-Read [references/anti-patterns.md](references/anti-patterns.md) when a design
-decision or review needs a concrete failure mechanism. Read
+For the first structure or revision review, read
+[references/anti-patterns.md](references/anti-patterns.md) once and select the
+relevant failure mechanisms. Do not force a check of every AP. Read
 [references/media-routing.md](references/media-routing.md) for the applicable
 medium and verification. Read [references/resource-registry.md](references/resource-registry.md)
 only when a known official authority, design system, asset family, or print/web
